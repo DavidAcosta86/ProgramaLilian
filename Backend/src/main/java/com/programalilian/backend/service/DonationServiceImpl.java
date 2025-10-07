@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Implementation of DonationService.
@@ -36,13 +37,18 @@ public class DonationServiceImpl implements DonationService {
             throw new IllegalArgumentException("Transaction ID already exists");
         }
 
-        // Create donation entity
+        // Get current timestamp for creation
+        LocalDateTime now = LocalDateTime.now();
+
+        // Create donation entity with timestamps
         Donation donation = Donation.builder()
                 .donorName(donorName)
                 .email(email)
                 .amount(amount)
                 .transactionId(transactionId)
                 .type(DonationType.ONE_TIME)
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
 
         // Save and return

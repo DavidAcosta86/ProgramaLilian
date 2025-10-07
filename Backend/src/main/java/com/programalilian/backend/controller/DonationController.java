@@ -2,6 +2,9 @@ package com.programalilian.backend.controller;
 
 import com.programalilian.backend.domain.Donation;
 import com.programalilian.backend.service.DonationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,7 @@ import java.math.BigDecimal;
  */
 @RestController
 @RequestMapping("/api/donations")
+@Tag(name = "Donation Management", description = "APIs for processing donations and handling payments")
 @RequiredArgsConstructor
 public class DonationController {
 

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -28,12 +29,17 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("El email ya está registrado");
         }
 
-        // Create user entity
+        // Get current timestamp
+        LocalDateTime now = LocalDateTime.now();
+
+        // Create user entity with timestamps
         User user = User.builder()
                 .fullName(request.fullName())
                 .email(request.email())
                 .phone(request.phone())
                 .birthDate(request.birthDate())
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
 
         // Save and return
@@ -54,6 +60,7 @@ public class UserServiceImpl implements UserService {
 
         // Update subscription info
         user.setSubscriptionId(subscriptionId);
+        user.setUpdatedAt(LocalDateTime.now()); // Update timestamp
 
         userRepository.save(user);
     }

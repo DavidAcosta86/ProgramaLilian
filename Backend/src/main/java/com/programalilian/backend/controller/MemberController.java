@@ -3,6 +3,10 @@ package com.programalilian.backend.controller;
 import com.programalilian.backend.domain.User;
 import com.programalilian.backend.dto.CreateMemberRequest;
 import com.programalilian.backend.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +20,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/members")
+@Tag(name = "Member Management", description = "APIs for managing Programa Lilian members")
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -27,6 +32,12 @@ public class MemberController {
      * @param request Member registration data
      * @return Created member with ID and timestamps
      */
+    @Operation(summary = "Register new member", description = "Creates a new member account in Programa Lilian with basic profile information")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Member successfully created"),
+            @ApiResponse(responseCode = "400", description = "Invalid member data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping
     public ResponseEntity<User> registerMember(@Valid @RequestBody CreateMemberRequest request) {
         User createdUser = userService.createMember(request);
