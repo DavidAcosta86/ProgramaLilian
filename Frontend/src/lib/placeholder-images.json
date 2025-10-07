@@ -1,0 +1,77 @@
+{
+  "placeholderImages": [
+    {
+      "id": "logo-image",
+      "description": "Dos manos sosteniendo un corazon.",
+      "imageUrl": "/images/logo.png",
+      "imageHint": "logo"
+
+    },
+    {
+      "id": "hero-background",
+      "description": "A group of diverse people smiling and collaborating at a community event.",
+      "imageUrl": "/images/hero.png",
+      "imageHint": "community event"
+    },
+    {
+      "id": "about-us-image",
+      "description": "Two people, a volunteer and a patient, sharing a warm and supportive conversation.",
+      "imageUrl": "https://picsum.photos/seed/about-us/600/400",
+      "imageHint": "supportive conversation"
+    },
+    {
+      "id": "event-1",
+      "description": "A bustling solidarity fair with stalls showcasing fashion and art.",
+      "imageUrl": "https://picsum.photos/seed/event1/600/400",
+      "imageHint": "charity event"
+    },
+    {
+      "id": "event-2",
+      "description": "An elegantly set dinner table at a benefit gala.",
+      "imageUrl": "https://images.unsplash.com/photo-1540317580384-e5d43616b9aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxnYWxhJTIwZXZlbnR8ZW58MHx8fHwxNzU5NzQ5NjIzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "gala event"
+    },
+    {
+      "id": "talk-1",
+      "description": "A speaker presenting in front of an audience, with a pink ribbon symbol on the screen.",
+      "imageUrl": "https://picsum.photos/seed/talk1/600/400",
+      "imageHint": "prevention talk"
+    },
+    {
+      "id": "talk-2",
+      "description": "A colorful display of healthy fruits and vegetables, representing nutrition.",
+      "imageUrl": "https://picsum.photos/seed/talk2/600/400",
+      "imageHint": "healthy food"
+    },
+    {
+      "id": "social-1",
+      "description": "A group of happy volunteers posing for a group photo.",
+      "imageUrl": "https://picsum.photos/seed/social1/400/400",
+      "imageHint": "happy volunteers"
+    },
+    {
+      "id": "social-2",
+      "description": "People mingling and laughing at an evening event.",
+      "imageUrl": "https://picsum.photos/seed/social2/400/400",
+      "imageHint": "social event"
+    },
+    {
+      "id": "social-3",
+      "description": "An infographic about breast cancer prevention.",
+      "imageUrl": "https://picsum.photos/seed/social3/400/400",
+      "imageHint": "infographic health"
+    },
+    {
+      "id": "donate-page-image",
+      "description": "Close-up of a hand placing a coin in a donation jar with a heart on it.",
+      "imageUrl": "https://images.unsplash.com/photo-1536856136534-bb679c52a9aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb25hdGlvbiUyMGdpdmluZ3xlbnwwfHx8fDE3NTk3ODM0Mjl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "donation giving"
+    },
+    {
+      "id": "socios-page-image",
+      "description": "A collage of diverse smiling faces, representing the community of members.",
+      "imageUrl": "https://picsum.photos/seed/socios-img/600/400",
+      "imageHint": "community people"
+    }
+  ]
+}
