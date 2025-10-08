@@ -10,9 +10,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { CheckCircle, Heart } from "lucide-react";
+import { CheckCircle, Heart, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 const sociosImage = PlaceHolderImages.find(p => p.id === 'socios-page-image');
+
+// For local development, hardcoded API URL
+const API_URL = 'http://localhost:8080';
 
 const formSchema = z.object({
   fullName: z.string().min(3, { message: "El nombre debe tener al menos 3 caracteres." }),
@@ -23,38 +27,96 @@ const formSchema = z.object({
 
 export default function SociosPage() {
   const { toast } = useToast();
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: "",
       email: "",
       phone: "",
+      birthDate: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    toast({
-      title: "Registro exitoso",
-      description: "¡Gracias por registrarte! Por favor, elige tu plan de suscripción.",
-    });
-    console.log(values);
-  }
-  
-  function handleSubscription(plan: 'Mensual' | 'Trimestral' | 'Semestral' | 'Anual') {
-    if (!form.formState.isValid) {
-         toast({
-            title: "Formulario incompleto",
-            description: "Por favor, completa tus datos antes de elegir un plan.",
-            variant: "destructive",
-        });
-        form.trigger();
-        return;
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${API_URL}/api/members`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: values.fullName,
+          email: values.email,
+          phone: values.phone,
+          birthDate: values.birthDate ? new Date(values.birthDate).toISOString().split('T')[0] : null,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al guardar los datos');
+      }
+
+      const user = await response.json();
+
+      setUserId(user.id);
+      setIsRegistered(true);
+
+      toast({
+        title: "¡Registro exitoso!",
+        description: "Tus datos han sido guardados. Ahora puedes elegir tu plan de suscripción.",
+      });
+
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast({
+        title: "Error al registrar",
+        description: "No se pudieron guardar tus datos. Inténtalo nuevamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-    toast({
-        title: "Redirigiendo a Mercado Pago...",
-        description: `Has elegido el plan ${plan}. ¡Gracias por tu apoyo recurrente!`,
-    });
-    // In a real app, redirect to Mercado Pago subscription link
+  }
+
+  async function handleSubscription(plan: 'Mensual' | 'Trimestral' | 'Semestral' | 'Anual') {
+    if (!isRegistered || !userId) {
+      toast({
+        title: "Registro requerido",
+        description: "Por favor, completa tus datos antes de elegir un plan.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Update subscription plan in backend
+      const response = await fetch(`${API_URL}/api/members/${userId}/subscription?subscriptionId=${plan}&planType=${plan}`, {
+        method: 'PUT',
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar suscripción');
+      }
+
+      toast({
+        title: `¡Suscripción activada!`,
+        description: `Plan ${plan} activado exitosamente.`,
+      });
+
+    } catch (error) {
+      console.error('Subscription error:', error);
+      toast({
+        title: "Error en suscripción",
+        description: "No se pudo completar la suscripción. Inténtalo nuevamente.",
+        variant: "destructive",
+      });
+    }
   }
 
 
@@ -157,7 +219,7 @@ export default function SociosPage() {
                             <p className="text-3xl font-bold">$1.500 <span className="text-sm font-normal text-muted-foreground">/mes</span></p>
                         </CardContent>
                         <CardFooter>
-                            <Button className="w-full" onClick={() => handleSubscription('Mensual')}>
+                            <Button className="w-full" onClick={() => handleSubscription('Mensual')} disabled={!isRegistered}>
                                 <Heart className="mr-2 size-4"/> Suscribirme
                             </Button>
                         </CardFooter>
@@ -171,7 +233,7 @@ export default function SociosPage() {
                             <p className="text-3xl font-bold">$4.500 <span className="text-sm font-normal text-muted-foreground">/trimestre</span></p>
                         </CardContent>
                         <CardFooter>
-                            <Button className="w-full" onClick={() => handleSubscription('Trimestral')}>
+                            <Button className="w-full" onClick={() => handleSubscription('Trimestral')} disabled={!isRegistered}>
                                <Heart className="mr-2 size-4"/> Suscribirme
                             </Button>
                         </CardFooter>
@@ -185,7 +247,7 @@ export default function SociosPage() {
                             <p className="text-3xl font-bold">$9000 <span className="text-sm font-normal text-muted-foreground">/semestre</span></p>
                         </CardContent>
                         <CardFooter>
-                            <Button className="w-full" onClick={() => handleSubscription('Semestral')}>
+                            <Button className="w-full" onClick={() => handleSubscription('Semestral')} disabled={!isRegistered}>
                                <Heart className="mr-2 size-4"/> Suscribirme
                             </Button>
                         </CardFooter>
@@ -199,7 +261,7 @@ export default function SociosPage() {
                             <p className="text-3xl font-bold">$18.000 <span className="text-sm font-normal text-muted-foreground">/año</span></p>
                         </CardContent>
                         <CardFooter>
-                            <Button className="w-full" onClick={() => handleSubscription('Anual')}>
+                            <Button className="w-full" onClick={() => handleSubscription('Anual')} disabled={!isRegistered}>
                                <Heart className="mr-2 size-4"/> Suscribirme
                             </Button>
                         </CardFooter>

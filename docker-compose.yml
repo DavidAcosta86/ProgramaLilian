@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Backend - Spring Boot
   backend:
@@ -50,7 +48,7 @@ services:
       MYSQL_USER: ${MYSQL_USER:-lilian}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./Context/init.sql:/docker-entrypoint-initdb.d/init.sql

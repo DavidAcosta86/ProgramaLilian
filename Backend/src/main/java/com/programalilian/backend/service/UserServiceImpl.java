@@ -64,4 +64,17 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    @Transactional
+    public User save(User user) {
+        user.setUpdatedAt(LocalDateTime.now());
+        return userRepository.save(user);
+    }
 }

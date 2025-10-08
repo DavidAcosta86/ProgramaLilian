@@ -57,42 +57,44 @@ export default function DonatePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
-                <RadioGroup value={amount} onValueChange={setAmount} className="grid grid-cols-2 gap-4 mb-6">
-                  {donationOptions.map(option => (
-                    <Label
-                      key={option.amount}
-                      htmlFor={`amount-${option.amount}`}
-                      className={`flex items-center justify-center p-4 border rounded-md cursor-pointer transition-colors ${amount === String(option.amount) ? 'bg-primary text-primary-foreground border-primary' : 'hover:bg-accent'}`}
-                    >
-                      <RadioGroupItem value={String(option.amount)} id={`amount-${option.amount}`} className="sr-only" />
-                      <span className="font-bold text-lg">{option.label}</span>
-                    </Label>
-                  ))}
-                </RadioGroup>
-                
-                <div>
-                    <Label
-                      htmlFor="amount-custom-radio"
-                      className={`flex items-center p-4 border rounded-md cursor-pointer transition-colors ${selectedAmountIsCustom ? 'bg-primary text-primary-foreground border-primary' : 'hover:bg-accent'}`}
+                <RadioGroup value={amount} onValueChange={setAmount}>
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    {donationOptions.map(option => (
+                      <Label
+                        key={option.amount}
+                        htmlFor={`amount-${option.amount}`}
+                        className={`flex items-center justify-center p-4 border rounded-md cursor-pointer transition-colors ${amount === String(option.amount) ? 'bg-primary text-primary-foreground border-primary' : 'hover:bg-accent'}`}
                       >
-                      <RadioGroupItem value="custom" id="amount-custom-radio" className="sr-only" />
-                      <span className="font-bold text-lg">Otro Monto</span>
-                    </Label>
+                        <RadioGroupItem value={String(option.amount)} id={`amount-${option.amount}`} className="sr-only" />
+                        <span className="font-bold text-lg">{option.label}</span>
+                      </Label>
+                    ))}
+                  </div>
 
-                    {selectedAmountIsCustom && (
-                        <div className="mt-4">
-                            <Label htmlFor="custom-amount-input" className="sr-only">Monto Personalizado</Label>
-                            <Input
-                                id="custom-amount-input"
-                                type="number"
-                                placeholder="Ingresa tu monto"
-                                value={customAmount}
-                                onChange={(e) => setCustomAmount(e.target.value)}
-                                className="text-lg h-12"
-                            />
-                        </div>
-                    )}
-                </div>
+                  <div className="mb-6">
+                      <Label
+                        htmlFor="amount-custom-radio"
+                        className={`flex items-center p-4 border rounded-md cursor-pointer transition-colors ${selectedAmountIsCustom ? 'bg-primary text-primary-foreground border-primary' : 'hover:bg-accent'}`}
+                        >
+                        <RadioGroupItem value="custom" id="amount-custom-radio" className="sr-only" />
+                        <span className="font-bold text-lg">Otro Monto</span>
+                      </Label>
+                  </div>
+
+                  {selectedAmountIsCustom && (
+                      <div className="mb-6">
+                          <Label htmlFor="custom-amount-input" className="sr-only">Monto Personalizado</Label>
+                          <Input
+                              id="custom-amount-input"
+                              type="number"
+                              placeholder="Ingresa tu monto"
+                              value={customAmount}
+                              onChange={(e) => setCustomAmount(e.target.value)}
+                              className="text-lg h-12"
+                          />
+                      </div>
+                  )}
+                </RadioGroup>
               </CardContent>
               <CardFooter className="p-0 mt-8">
                 <Button size="lg" className="w-full font-bold text-xl" onClick={handleDonate}>

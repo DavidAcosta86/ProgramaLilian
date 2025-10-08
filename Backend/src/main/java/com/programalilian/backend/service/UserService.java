@@ -37,4 +37,20 @@ public interface UserService {
      * @throws IllegalArgumentException if user not found or invalid data
      */
     void updatePaymentSubscription(Long userId, String subscriptionId);
+
+    /**
+     * Finds a member by their ID.
+     *
+     * @param id The member ID
+     * @return The member if found, otherwise empty
+     */
+    Optional<User> findById(Long id);
+
+    /**
+     * Saves a user entity.
+     *
+     * @param user The user to save
+     * @return The saved user
+     */
+    User save(User user);
 }

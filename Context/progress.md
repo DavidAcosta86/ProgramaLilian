@@ -112,30 +112,46 @@
 - [ ] Email templates (welcome, donation receipt, subscription confirm)
 - [ ] Tests with embedded RabbitMQ (Testcontainers if needed)
 
-### ✅ Controller Layer (Week 5-6)
+### ✅ Controller Layer + Frontend Integration (Week 5-6)
 
-Complete - REST API endpoints implemented
+**COMPLETADO:** Sistema de registro completo con UX inteligente
+
+### Backend - REST API
 
 - [x] Create MemberController with user registration and subscription management
 - [x] Create DonationController with donation processing and MercadoPago webhooks
+- [x] Create AdminController for statistics and member listing
 - [x] Implement DTOs for request/response handling
 - [x] Add proper HTTP status codes and error handling
 - [x] Validate input with Jakarta Validation annotations
 - [x] Provide JSON serialization for API responses
+- [x] Add SecurityConfig with local development configuration
+- [x] Include Swagger/OpenAPI documentation
+
+### Frontend - UX State Management
+
+- [x] Implement state-based registration flow (buttons disabled until registration complete)
+- [x] Add real API calls to backend for member registration
+- [x] Create admin panel with statistics and member listing
+- [x] Error handling and user feedback for failed registrations
+- [x] Loading states and success confirmations
 
 **API Endpoints Available:**
 
-- POST /api/members - Register new member
-- GET /api/members/{id} - Get member by ID
-- PUT /api/members/{id}/subscription - Update payment subscription
-- POST /api/donations - Process one-time donation
-- POST /api/donations/webhook/{transactionId} - MercadoPago webhook handler
-- GET /api/donations/stats - Donation statistics placeholder
+- POST /api/members - Register new member (real API integration)
+- GET /api/admin/members/recent - Get recent members for admin panel
+- GET /api/admin/stats - Get membership and donation statistics
+
+**Frontend Pages Updated:**
+
+- `/socios` - Full registration flow with state management
+- `/admin` - Admin dashboard with real data from backend
 
 **Services Available:**
 
-- [x] UserService - Member management business logic
-- [x] DonationService - Donation processing business logic
+- [x] UserService - Member management business logic with timestamps
+- [x] DonationService - Donation processing with transaction IDs
+- [x] Manual timestamp management (replaced @CreationTimestamp)
 
 ---
 
@@ -370,6 +386,6 @@ Complete - REST API endpoints implemented
 
 ---
 
-**Last Updated:** October 7, 2025
-**Current Sprint:** Controller Layer (Completed)
-**Next Deliverable:** Security & Authentication Layer
+**Last Updated:** October 8, 2025
+**Current Sprint:** Controller & Frontend Integration (Completed)
+**Next Deliverable:** MercadoPago Integration (Real Payments)

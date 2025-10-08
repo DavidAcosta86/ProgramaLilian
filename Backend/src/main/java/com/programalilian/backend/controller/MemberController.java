@@ -70,9 +70,19 @@ public class MemberController {
     @PutMapping("/{id}/subscription")
     public ResponseEntity<String> updateSubscription(
             @PathVariable Long id,
-            @RequestParam String subscriptionId) {
+            @RequestParam String subscriptionId,
+            @RequestParam(required = false) String planType) {
 
         userService.updatePaymentSubscription(id, subscriptionId);
+        if (planType != null) {
+            // Update subscription plan
+            Optional<User> userOpt = userService.findById(id);
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                user.setSubscriptionPlan(planType);
+                userService.save(user);
+            }
+        }
         return ResponseEntity.ok("Subscription updated successfully");
     }
 
