@@ -67,6 +67,19 @@ public class AdminController {
     }
 
     /**
+     * Get all donations.
+     * Used by admin panel to display donation list.
+     *
+     * @return List of all donations
+     */
+    @GetMapping("/donations")
+    public ResponseEntity<List<com.programalilian.backend.domain.Donation>> getAllDonations() {
+        List<com.programalilian.backend.domain.Donation> donations = donationRepository.findAll();
+        donations.sort((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()));
+        return ResponseEntity.ok(donations);
+    }
+
+    /**
      * Data Transfer Object for admin statistics.
      */
     public static class AdminStats {

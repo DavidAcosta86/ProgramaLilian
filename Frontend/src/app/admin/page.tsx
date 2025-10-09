@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, DollarSign, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Users, DollarSign, Calendar, FileText, Settings } from 'lucide-react';
+import Link from 'next/link';
 import { API_BASE_URL } from '@/lib/config';
 
 interface AdminStats {
@@ -85,6 +87,71 @@ export default function AdminPage() {
         <p className="text-lg text-muted-foreground">
           Estadísticas y gestión de miembros de Programa Lilian
         </p>
+      </div>
+
+      {/* Main Navigation */}
+      <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="flex items-center justify-center gap-3 text-xl">
+              <Settings className="h-6 w-6 text-primary" />
+              Gestión de Usuarios y Donaciones
+            </CardTitle>
+            <CardDescription>
+              Administra miembros, donaciones y datos del sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Gestiona usuarios, visualiza donaciones, administra accesos y configura el sistema.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button asChild variant="outline" size="sm">
+                <Link href="/admin/users">
+                  <Users className="h-4 w-4 mr-2" />
+                  Usuarios
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="sm">
+                <Link href="/admin/donations">
+                  <DollarSign className="h-4 w-4 mr-2" />
+                  Donaciones
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="flex items-center justify-center gap-3 text-xl">
+              <FileText className="h-6 w-6 text-primary" />
+              Creación de Contenido
+            </CardTitle>
+            <CardDescription>
+              Gestiona el contenido del sitio web
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Actualiza secciones del sitio, crea eventos, administra publicaciones y contenido multimedia.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button asChild variant="outline" size="sm">
+                <Link href="/admin/content/manage">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Administrar Contenido
+                </Link>
+              </Button>
+              <Button asChild size="sm">
+                <Link href="/admin/content">
+                  <FileText className="h-4 w-4 mr-2" />
+                  Crear Contenido
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Stats Cards */}

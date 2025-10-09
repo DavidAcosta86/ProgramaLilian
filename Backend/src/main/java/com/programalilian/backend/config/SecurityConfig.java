@@ -45,16 +45,17 @@ public class SecurityConfig {
         }
 
         /**
-         * Production configuration with OAuth2 (to be implemented)
+         * Production/Development configuration with OAuth2 (to be implemented)
          * This will enforce authentication for most endpoints
          */
         @Bean
         @Profile("!local")
         public SecurityFilterChain productionSecurityFilterChain(HttpSecurity http) throws Exception {
                 // TODO: Implement OAuth2 Google authentication when needed
-                // For now, allow all requests (same as local)
+                // For now, allow all requests (same as local) + CORS enabled
                 http
                                 .csrf(csrf -> csrf.disable())
+                                .cors(c -> c.configurationSource(corsConfigurationSource())) // Add CORS
                                 .authorizeHttpRequests(authz -> authz
                                                 .anyRequest().permitAll());
 
