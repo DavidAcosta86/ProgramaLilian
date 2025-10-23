@@ -10,12 +10,14 @@ import { useToast } from '@/hooks/use-toast';
 import { API_BASE_URL } from '@/lib/config';
 
 const SECTION_TYPES = [
-  'hero',
-  'about',
   'events',
   'talks',
-  'social-posts',
 ] as const;
+
+const SECTION_LABELS = {
+  'events': 'Evento',
+  'talks': 'Charla',
+};
 
 type SectionType = typeof SECTION_TYPES[number];
 
@@ -34,7 +36,6 @@ interface FormData {
 export default function ContentAdminPage() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [confirmationStep, setConfirmationStep] = useState<'none' | 'confirm' | 'confirm2'>('none');
   const [imageSizeWarning, setImageSizeWarning] = useState<string>('');
   const [formData, setFormData] = useState<FormData>({
     section: '',
@@ -63,28 +64,7 @@ export default function ContentAdminPage() {
   };
 
   const handleSectionChange = (section: string) => {
-    const isCriticalSection = section === 'hero' || section === 'about';
-
-    if (isCriticalSection && confirmationStep === 'none') {
-      setConfirmationStep('confirm');
-      toast({
-        title: "Sección crítica",
-        description: "Esta sección es importante. ¿Seguro que quieres editar?",
-      });
-      return;
-    }
-
-    if (isCriticalSection && confirmationStep === 'confirm') {
-      setConfirmationStep('confirm2');
-      toast({
-        title: "Última confirmación",
-        description: "Esta es una segunda confirmación para secciones críticas.",
-      });
-      return;
-    }
-
     setFormData(prev => ({ ...prev, section: section }));
-    setConfirmationStep('none');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -130,7 +110,7 @@ export default function ContentAdminPage() {
           published: true,
           image: null,
         });
-        setConfirmationStep('none');
+
       } else {
         throw new Error('Error al crear contenido');
       }
@@ -146,9 +126,6 @@ export default function ContentAdminPage() {
   };
 
   const getSelectedSectionValue = () => {
-    if (confirmationStep !== 'none') {
-      return '';
-    }
     return formData.section;
   };
 
@@ -189,17 +166,10 @@ export default function ContentAdminPage() {
                 <option value="">Seleccionar sección</option>
                 {SECTION_TYPES.map((section) => (
                   <option key={section} value={section}>
-                    {section.charAt(0).toUpperCase() + section.slice(1)}
-                    {(section === 'hero' || section === 'about') && " ⚠️"}
+                    {SECTION_LABELS[section]}
                   </option>
                 ))}
               </select>
-              {confirmationStep === 'confirm' && (
-                <p className="text-red-600 text-sm">Hacer click en confirmar para continuar</p>
-              )}
-              {confirmationStep === 'confirm2' && (
-                <p className="text-red-600 text-sm">Última oportunidad: ¿Seguro?</p>
-              )}
             </div>
 
             {/* Dynamic Fields */}
@@ -212,56 +182,19 @@ export default function ContentAdminPage() {
                   placeholder="Título principal"
                 />
               </div>
-
-              {(formData.section === 'hero' || formData.section === 'social-posts') && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Subtítulo</label>
-                  <Input
-                    value={formData.subtitle}
-                    onChange={(e) => handleInputChange('subtitle', e.target.value)}
-                    placeholder="Subtítulo"
-                  />
-                </div>
-              )}
             </div>
 
             {/* Content - Rich Text Area */}
-            {formData.section !== 'social-posts' && (
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Contenido</label>
-                <textarea
-                  value={formData.content}
-                  onChange={(e) => handleInputChange('content', e.target.value)}
-                  placeholder="Escribe el contenido principal..."
-                  rows={4}
-                  className="flex min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                />
-              </div>
-            )}
-
-            {/* Hero-specific fields */}
-            {formData.section === 'hero' && (
-              <div className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Botón 1 Texto</label>
-                    <Input
-                      value={formData.buttonText1}
-                      onChange={(e) => handleInputChange('buttonText1', e.target.value)}
-                      placeholder="Por ejemplo: 'Donar Ahora'"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Botón 1 URL</label>
-                    <Input
-                      value={formData.buttonUrl1}
-                      onChange={(e) => handleInputChange('buttonUrl1', e.target.value)}
-                      placeholder="/donate"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Contenido</label>
+              <textarea
+                value={formData.content}
+                onChange={(e) => handleInputChange('content', e.target.value)}
+                placeholder="Escribe el contenido principal..."
+                rows={4}
+                className="flex min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              />
+            </div>
 
             {/* Events/Talks specific fields */}
             {(formData.section === 'events' || formData.section === 'talks') && (
@@ -334,7 +267,7 @@ export default function ContentAdminPage() {
               </label>
             </div>
 
-            <Button type="submit" disabled={!formData.section || isLoading || confirmationStep !== 'none' || !!imageSizeWarning} className="w-full">
+            <Button type="submit" disabled={!formData.section || isLoading || !!imageSizeWarning} className="w-full">
               {isLoading ? 'Creando...' : 'Crear Contenido'}
             </Button>
           </form>

@@ -54,4 +54,9 @@ public interface ContentService {
      * Process and compress image upload
      */
     byte[] processImageUpload(MultipartFile file) throws Exception;
+
+    /**
+     * Get upcoming content (events + talks + social-posts) for homepage
+     */
+    List<Content> getUpcomingContent();
 }

@@ -29,4 +29,9 @@ public interface ContentRepository extends JpaRepository<Content, Long> {
      */
     @Query("SELECT c FROM Content c WHERE c.section = :section AND c.published = true ORDER BY c.createdAt DESC")
     Content findTopBySectionAndPublishedOrderByCreatedAtDesc(@Param("section") String section);
+
+    /**
+     * Find content by multiple sections and published status
+     */
+    List<Content> findBySectionInAndPublishedTrue(List<String> sections);
 }

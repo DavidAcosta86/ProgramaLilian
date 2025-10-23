@@ -11,6 +11,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight, Calendar, HeartHandshake, Users } from 'lucide-react';
 import { Icons } from '@/components/icons';
 import { API_BASE_URL } from '@/lib/config';
+import EventCalendar from '@/components/EventCalendar';
 
 interface ContentItem {
   id: number;
@@ -53,6 +54,7 @@ export default function Home() {
   const [events, setEvents] = useState<ContentItem[]>([]);
   const [talks, setTalks] = useState<ContentItem[]>([]);
   const [socialPosts, setSocialPosts] = useState<ContentItem[]>([]);
+  const [upcomingContent, setUpcomingContent] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -120,6 +122,22 @@ export default function Home() {
           }
         } catch (err) {
           console.warn('Failed to load talks:', err);
+        }
+
+        // Load upcoming content (unified feed)
+        try {
+          const upcomingRes = await fetch(`${API_BASE_URL}/api/content/upcoming`);
+          if (upcomingRes.ok) {
+            const contentType = upcomingRes.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              const upcomingData = await upcomingRes.json();
+              setUpcomingContent(upcomingData);
+            } else {
+              console.warn('Upcoming content API returned non-JSON response');
+            }
+          }
+        } catch (err) {
+          console.warn('Failed to load upcoming content:', err);
         }
 
         // Load social posts
@@ -236,158 +254,89 @@ export default function Home() {
         </div>
       </section>
 
-      {/* News & Events Section */}
+      {/* News & Events Section - Feed Unificado */}
       <section id="news" className="py-16 md:py-24">
         <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-headline mb-8">Novedades y Actividades</h2>
-          <Tabs defaultValue="events" className="w-full">
-            <TabsList className="mb-8">
-              <TabsTrigger value="events">Próximos Eventos</TabsTrigger>
-              <TabsTrigger value="talks">Charlas de Prevención</TabsTrigger>
-            </TabsList>
-            <TabsContent value="events">
-              <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-                {events.length > 0 ? (
-                  // Render dynamic events from API
-                  events.map((event) => (
-                    <Card key={event.id} className="text-left overflow-hidden">
-                      {event.imageData && (
-                        <Image
-                          src={`${API_BASE_URL}/api/content/image/${event.id}`}
-                          alt={event.title || 'Evento'}
-                          width={600}
-                          height={400}
-                          className="w-full h-48 object-cover"
-                          unoptimized
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            if (target.src !== eventImages[0]?.imageUrl) {
-                              target.src = eventImages[0]?.imageUrl || '';
-                            }
-                          }}
-                        />
-                      )}
-                      {!event.imageData && eventImages[0] && (
-                        <Image src={eventImages[0].imageUrl} alt={eventImages[0].description} data-ai-hint={eventImages[0].imageHint} width={600} height={400} className="w-full h-48 object-cover"/>
-                      )}
-                      <CardHeader>
-                        <CardTitle className="font-headline text-2xl">{event.title || 'Evento'}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">{event.content}</p>
-                      </CardContent>
-                      <CardFooter className="flex justify-between items-center">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Calendar className="size-4" />
-                          <span>{event.date || new Date(event.createdAt).toLocaleDateString('es-ES')}</span>
-                        </div>
-                        {event.buttonText1 && event.buttonUrl1 ? (
-                          <Button asChild variant="link">
-                            <a href={event.buttonUrl1.startsWith('http') ? event.buttonUrl1 : `https://${event.buttonUrl1}`} target="_blank" rel="noopener noreferrer">
-                              {event.buttonText1} <ArrowRight className="ml-2 size-4" />
-                            </a>
-                          </Button>
-                        ) : null}
-                      </CardFooter>
-                    </Card>
-                  ))
-                ) : (
-                  // Render fallback events
-                  fallbackEvents.map((event) => (
-                    <Card key={event.id} className="text-left overflow-hidden">
-                      {event.image && (
-                        <Image src={event.image.imageUrl} alt={event.image.description} data-ai-hint={event.image.imageHint} width={600} height={400} className="w-full h-48 object-cover"/>
-                      )}
-                      <CardHeader>
-                        <CardTitle className="font-headline text-2xl">{event.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">{event.description}</p>
-                      </CardContent>
-                      <CardFooter className="flex justify-between items-center">
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Calendar className="size-4" />
-                          <span>{event.date}</span>
-                        </div>
-                        <Button variant="link">Ver más <ArrowRight className="ml-2 size-4" /></Button>
-                      </CardFooter>
-                    </Card>
-                  ))
-                )}
-              </div>
-            </TabsContent>
-            <TabsContent value="talks">
-              <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-                {talks.length > 0 ? (
-                  // Render dynamic talks from API
-                  talks.map((talk) => (
-                    <Card key={talk.id} className="text-left overflow-hidden">
-                      {talk.imageData && (
-                        <Image
-                          src={`${API_BASE_URL}/api/content/image/${talk.id}`}
-                          alt={talk.title || 'Charla'}
-                          width={600}
-                          height={400}
-                          className="w-full h-48 object-cover"
-                          unoptimized
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            if (target.src !== talkImages[0]?.imageUrl) {
-                              target.src = talkImages[0]?.imageUrl || '';
-                            }
-                          }}
-                        />
-                      )}
-                      {!talk.imageData && talkImages[0] && (
-                        <Image src={talkImages[0].imageUrl} alt={talkImages[0].description} data-ai-hint={talkImages[0].imageHint} width={600} height={400} className="w-full h-48 object-cover"/>
-                      )}
-                      <CardHeader>
-                        <CardTitle className="font-headline text-2xl">{talk.title || 'Charla'}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">{talk.content}</p>
-                      </CardContent>
-                      <CardFooter className="flex justify-between items-center">
-                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Calendar className="size-4" />
-                          <span>{talk.date || new Date(talk.createdAt).toLocaleDateString('es-ES')}</span>
-                        </div>
-                        {talk.buttonText1 && talk.buttonUrl1 ? (
-                          <Button asChild variant="link">
-                            <a href={talk.buttonUrl1.startsWith('http') ? talk.buttonUrl1 : `https://${talk.buttonUrl1}`} target="_blank" rel="noopener noreferrer">
-                              {talk.buttonText1} <ArrowRight className="ml-2 size-4" />
-                            </a>
-                          </Button>
-                        ) : null}
-                      </CardFooter>
-                    </Card>
-                  ))
-                ) : (
-                  // Render fallback talks
-                  fallbackTalks.map((talk) => (
-                    <Card key={talk.id} className="text-left overflow-hidden">
-                      {talk.image && (
-                        <Image src={talk.image.imageUrl} alt={talk.image.description} data-ai-hint={talk.image.imageHint} width={600} height={400} className="w-full h-48 object-cover"/>
-                      )}
-                      <CardHeader>
-                        <CardTitle className="font-headline text-2xl">{talk.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-muted-foreground">{talk.description}</p>
-                      </CardContent>
-                      <CardFooter className="flex justify-between items-center">
-                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Calendar className="size-4" />
-                          <span>{talk.date}</span>
-                        </div>
-                        <Button variant="link">Inscribirse <ArrowRight className="ml-2 size-4" /></Button>
-                      </CardFooter>
-                    </Card>
-                  ))
-                )}
-              </div>
-            </TabsContent>
-          </Tabs>
+          <h2 className="text-3xl md:text-4xl font-headline mb-8">Próximos Eventos</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {upcomingContent.length > 0 ? (
+              // Render unified content from API
+              upcomingContent.map((item) => (
+                <Card key={item.id} className="text-left overflow-hidden">
+                  {item.imageData && (
+                    <Image
+                      src={`${API_BASE_URL}/api/content/image/${item.id}`}
+                      alt={item.title || 'Publicación'}
+                      width={600}
+                      height={400}
+                      className="w-full h-48 object-cover"
+                      unoptimized
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        if (target.src !== eventImages[0]?.imageUrl) {
+                          target.src = eventImages[0]?.imageUrl || '';
+                        }
+                      }}
+                    />
+                  )}
+                  {!item.imageData && eventImages[0] && (
+                    <Image src={eventImages[0].imageUrl} alt={eventImages[0].description} data-ai-hint={eventImages[0].imageHint} width={600} height={400} className="w-full h-48 object-cover"/>
+                  )}
+                  <CardHeader>
+                    <CardTitle className="font-headline text-2xl">{item.title || 'Publicación'}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">{item.content}</p>
+                  </CardContent>
+                  <CardFooter className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="size-4" />
+                      <span>{item.date || new Date(item.createdAt).toLocaleDateString('es-ES')}</span>
+                    </div>
+                    {item.buttonText1 && item.buttonUrl1 ? (
+                      <Button asChild variant="link">
+                        <a href={item.buttonUrl1.startsWith('http') ? item.buttonUrl1 : `https://${item.buttonUrl1}`} target="_blank" rel="noopener noreferrer">
+                          {item.buttonText1} <ArrowRight className="ml-2 size-4" />
+                        </a>
+                      </Button>
+                    ) : null}
+                  </CardFooter>
+                </Card>
+              ))
+            ) : (
+              // Render fallback content combining events and talks (6 items total for consistency)
+              [...fallbackEvents, ...fallbackTalks.slice(0, 2)].map((item, index) => (
+                <Card key={item.id || `fallback-${index}`} className="text-left overflow-hidden">
+                  {item.image && (
+                    <Image src={item.image.imageUrl} alt={item.image.description} data-ai-hint={item.image.imageHint} width={600} height={400} className="w-full h-48 object-cover"/>
+                  )}
+                  <CardHeader>
+                    <CardTitle className="font-headline text-2xl">{item.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">{item.description}</p>
+                  </CardContent>
+                  <CardFooter className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Calendar className="size-4" />
+                      <span>{item.date}</span>
+                    </div>
+                    <Button variant="link">Ver más <ArrowRight className="ml-2 size-4" /></Button>
+                  </CardFooter>
+                </Card>
+              ))
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Calendar Section */}
+      <section className="py-16 md:py-24 bg-muted/50">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-headline mb-8 text-center">Calendario de Eventos</h2>
+          <div className="max-w-4xl mx-auto">
+            <EventCalendar />
+          </div>
         </div>
       </section>
 

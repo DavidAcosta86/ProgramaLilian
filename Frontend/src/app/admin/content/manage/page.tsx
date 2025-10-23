@@ -57,9 +57,9 @@ interface ContentItem {
 const SECTIONS = [
   { value: 'hero', label: 'Hero' },
   { value: 'about', label: 'Sobre Nosotros' },
-  { value: 'events', label: 'Eventos' },
-  { value: 'talks', label: 'Charlas' },
-  { value: 'social-posts', label: 'Redes Sociales' },
+  { value: 'events', label: 'Próximos Eventos' },
+  { value: 'talks', label: 'Charlas de Prevención' },
+  { value: 'social-posts', label: 'Publicaciones Redes' },
 ];
 
 export default function ContentManagementPage() {
@@ -513,6 +513,19 @@ export default function ContentManagementPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md mt-1"
                 />
               </div>
+
+              {/* Date field - only show for events and talks */}
+              {(editingContent.section === 'events' || editingContent.section === 'talks') && (
+                <div>
+                  <Label>Fecha</Label>
+                  <Input
+                    type="date"
+                    value={editingContent.date || ''}
+                    onChange={(e) => setEditingContent({ ...editingContent, date: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>

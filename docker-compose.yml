@@ -10,8 +10,15 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       DB_HOST: mysql
       DB_NAME: lilian_dev
+      DB_USERNAME: lilian
+      DB_PASSWORD: password
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
     depends_on:
       mysql:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     networks:
       - lilian-network
@@ -35,6 +42,23 @@ services:
         condition: service_healthy
     networks:
       - lilian-network
+
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - lilian-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   # MySQL Database
   mysql:

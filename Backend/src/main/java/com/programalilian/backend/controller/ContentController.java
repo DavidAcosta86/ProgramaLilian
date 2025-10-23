@@ -47,6 +47,11 @@ public class ContentController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/content/upcoming")
+    public ResponseEntity<List<Content>> getUpcomingContent() {
+        return ResponseEntity.ok(contentService.getUpcomingContent());
+    }
+
     @GetMapping("/content/image/{contentId}")
     public ResponseEntity<ByteArrayResource> getContentImage(@PathVariable Long contentId) {
         try {

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of ContentService
@@ -88,6 +89,20 @@ public class ContentServiceImpl implements ContentService {
     @Transactional
     public void deleteContent(Long id) {
         contentRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Content> getUpcomingContent() {
+        // Get all published content from events, talks, and social-posts
+        List<String> sections = List.of("events", "talks", "social-posts");
+        List<Content> allContent = contentRepository.findBySectionInAndPublishedTrue(sections);
+
+        // Sort by creation date (newest first) and limit to 8
+        return allContent.stream()
+                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                .limit(8)
+                .collect(Collectors.toList());
     }
 
     @Override
